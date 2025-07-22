@@ -25,6 +25,10 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  // Thêm config cho production
+  trailingSlash: false,
+  assetPrefix: process.env.NODE_ENV === "production" ? "" : "",
+  basePath: "",
   output: "standalone",
 };
 

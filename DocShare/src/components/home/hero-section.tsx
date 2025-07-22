@@ -29,7 +29,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ howItWorksRef }) => {
               <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-black leading-none uppercase split-text-animation tracking-tighter">
                 <div className="overflow-hidden">
                   <span className="inline-block animate-reveal-text-up">
-                    Nền tảng 123
+                    Nền tảng
                   </span>
                 </div>
                 <div className="overflow-hidden">

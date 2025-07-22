@@ -105,48 +105,92 @@ async function DocumentResults({ searchQuery }: { searchQuery?: string }) {
 export default async function DocumentsPage({
   searchParams,
 }: DocumentsPageProps) {
-  // Sử dụng await cho searchParams trong Next.js 14
-  const params = await Promise.resolve(searchParams);
-  const searchQuery = params?.q || "";
-  const error = params?.error;
-  const errorId = params?.id;
+  // Log environment variables để debug
+  console.log("🌐 Environment check:", {
+    NODE_ENV: process.env.NODE_ENV,
+    API_URL: process.env.NEXT_PUBLIC_API_URL,
+    BACKEND_URL: process.env.NEXT_PUBLIC_BACKEND_URL,
+  });
 
-  return (
-    <div className="pt-24 pb-16 min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col space-y-8">
-          {/* Hiển thị thông báo lỗi nếu có */}
-          {error && <ErrorAlert error={error} id={errorId} />}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
-                Kho tài liệu
-              </h1>
-              <p className="text-white/70">
-                Khám phá và tải xuống các tài liệu chất lượng cao
-              </p>
+  try {
+    const resolvedSearchParams = await searchParams;
+    const { error, id: errorId, ...otherParams } = resolvedSearchParams;
+
+    // Thêm fallback nếu API không khả dụng
+    let documents: DocumentsResponse;
+
+    try {
+      documents = await documentService.getPublicDocuments(otherParams);
+    } catch (apiError) {
+      console.error("❌ API Error:", apiError);
+
+      // Fallback với empty data
+      documents = {
+        documents: [],
+        pagination: {
+          currentPage: 1,
+          totalPages: 0,
+          totalDocuments: 0,
+          hasNextPage: false,
+          hasPrevPage: false,
+        },
+      };
+    }
+
+    return (
+      <div className="pt-24 pb-16 min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col space-y-8">
+            {/* Hiển thị thông báo lỗi nếu có */}
+            {error && <ErrorAlert error={error} id={errorId} />}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div>
+                <h1 className="text-2xl md:text-3xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
+                  Kho tài liệu
+                </h1>
+                <p className="text-white/70">
+                  Khám phá và tải xuống các tài liệu chất lượng cao
+                </p>
+              </div>
+
+              <div className="flex gap-2 w-full md:w-auto">
+                <DocumentSearch className="flex-1 md:w-80" />
+                <DocumentUpload />
+              </div>
             </div>
 
-            <div className="flex gap-2 w-full md:w-auto">
-              <DocumentSearch className="flex-1 md:w-80" />
-              <DocumentUpload />
+            <div className="flex items-center gap-2 text-sm text-white/60">
+              <FiFileText className="h-4 w-4" />
+              <span>
+                {searchQuery
+                  ? `Kết quả tìm kiếm cho "${searchQuery}"`
+                  : "Tất cả tài liệu công khai"}
+              </span>
             </div>
-          </div>
 
-          <div className="flex items-center gap-2 text-sm text-white/60">
-            <FiFileText className="h-4 w-4" />
-            <span>
-              {searchQuery
-                ? `Kết quả tìm kiếm cho "${searchQuery}"`
-                : "Tất cả tài liệu công khai"}
-            </span>
+            <Suspense
+              fallback={<DocumentGrid documents={[]} isLoading={true} />}
+            >
+              <DocumentResults searchQuery={searchQuery} />
+            </Suspense>
           </div>
-
-          <Suspense fallback={<DocumentGrid documents={[]} isLoading={true} />}>
-            <DocumentResults searchQuery={searchQuery} />
-          </Suspense>
         </div>
       </div>
-    </div>
-  );
+    );
+  } catch (error: any) {
+    console.error("❌ Page Error:", error);
+
+    return (
+      <div className="pt-24 pb-16 min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
+        <div className="container mx-auto px-4 text-center">
+          <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-6">
+            <h2 className="text-red-400 text-xl mb-2">Lỗi tải trang</h2>
+            <p className="text-red-300/80">
+              Không thể tải trang tài liệu. Vui lòng thử lại sau.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 }
