@@ -1,19 +1,18 @@
 import axios, { AxiosResponse, AxiosError } from "axios";
 
 const getApiUrl = () => {
-  // Thử các URL khác nhau
+  // Ưu tiên URL backend chính xác
   const urls = [
+    "https://docshare-backend-production.up.railway.app/api", // URL chính xác
     process.env.NEXT_PUBLIC_API_URL,
     process.env.NEXT_PUBLIC_BACKEND_URL + "/api",
-    "https://docshare-backend-production.up.railway.app/api",
     "http://localhost:5000/api",
   ].filter(Boolean);
 
   const apiUrl = urls[0];
   console.log("🌐 Using API URL:", apiUrl);
-  console.log("🔍 Available URLs:", urls);
 
-  return apiUrl || "http://localhost:5000/api";
+  return apiUrl;
 };
 
 // Create axios instance
