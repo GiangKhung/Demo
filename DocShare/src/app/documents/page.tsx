@@ -82,17 +82,17 @@ async function DocumentResults({ searchQuery }: { searchQuery?: string }) {
       config: {
         url: error.config?.url,
         method: error.config?.method,
-        baseURL: error.config?.baseURL
-      }
+        baseURL: error.config?.baseURL,
+      },
     });
-    
+
     return (
       <div className="text-center p-8">
         <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 inline-block">
           <FiAlertTriangle className="w-6 h-6 text-red-400 mx-auto mb-2" />
           <div className="text-red-400 font-medium">Lỗi tải dữ liệu</div>
           <div className="text-red-300/80 text-sm mt-1">
-            {error.response?.status === 404 
+            {error.response?.status === 404
               ? "Không thể kết nối đến máy chủ. Vui lòng thử lại sau."
               : "Đã xảy ra lỗi khi tải danh sách tài liệu. Vui lòng thử lại sau."}
           </div>
