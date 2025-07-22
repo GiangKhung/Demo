@@ -1,0 +1,8 @@
+Đây là file test để kiểm tra chức năng upload.
+
+Nội dung:
+- File text đơn giản
+- Kích thước nhỏ
+- Dùng để test upload API
+
+Thời gian tạo: 2025-07-18

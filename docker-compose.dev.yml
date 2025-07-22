@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  # MongoDB Database for Development
+  mongodb-dev:
+    image: mongo:7.0
+    container_name: docshare-mongodb-dev
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password123
+      MONGO_INITDB_DATABASE: docshare_dev
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_dev_data:/data/db
+      - ./backend/scripts/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    networks:
+      - docshare-dev-network
+
+  # Backend API for Development
+  backend-dev:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: docshare-backend-dev
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 5000
+      MONGODB_URI: mongodb://admin:password123@mongodb-dev:27017/docshare_dev?authSource=admin
+      JWT_SECRET: dev-jwt-secret-key
+      JWT_EXPIRE: 7d
+      CORS_ORIGIN: http://localhost:3000
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+      - backend_dev_uploads:/app/uploads
+    depends_on:
+      - mongodb-dev
+    networks:
+      - docshare-dev-network
+    command: npm run dev
+
+  # Frontend Next.js for Development
+  frontend-dev:
+    build:
+      context: ./DocShare
+      dockerfile: Dockerfile.dev
+    container_name: docshare-frontend-dev
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      NEXT_PUBLIC_BACKEND_URL: http://localhost:5000
+      NEXT_PUBLIC_API_URL: http://localhost:5000/api
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./DocShare:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - backend-dev
+    networks:
+      - docshare-dev-network
+    command: npm run dev
+
+volumes:
+  mongodb_dev_data:
+    driver: local
+  backend_dev_uploads:
+    driver: local
+
+networks:
+  docshare-dev-network:
+    driver: bridge
