@@ -31,13 +31,23 @@ export const documentService = {
     params: Record<string, any> = {}
   ): Promise<DocumentsResponse> {
     try {
+      console.log("🔍 Fetching documents with params:", params);
+      console.log("🌐 API URL:", process.env.NEXT_PUBLIC_API_URL);
+
       const response = await api.get<{
         success: boolean;
         data: DocumentsResponse;
       }>("/documents", { params });
+
+      console.log("✅ Documents fetched successfully:", response.data);
       return response.data.data;
     } catch (error: any) {
-      console.error("Error fetching public documents:", error);
+      console.error("❌ Error fetching public documents:", {
+        message: error.message,
+        status: error.response?.status,
+        data: error.response?.data,
+        config: error.config,
+      });
       throw new Error(
         error.response?.data?.error || "Không thể tải danh sách tài liệu"
       );

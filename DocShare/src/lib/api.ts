@@ -2,6 +2,13 @@ import axios, { AxiosInstance, AxiosResponse, AxiosError } from "axios";
 
 // Get the appropriate API URL based on environment
 const getApiUrl = () => {
+  // Production environment
+  if (process.env.NODE_ENV === "production") {
+    return (
+      process.env.NEXT_PUBLIC_API_URL || "https://your-backend-url.com/api"
+    );
+  }
+
   // Server-side: use internal Docker network
   if (typeof window === "undefined") {
     return (
@@ -10,6 +17,7 @@ const getApiUrl = () => {
       "http://127.0.0.1:5000/api"
     );
   }
+
   // Client-side: use public URL
   return process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:5000/api";
 };
