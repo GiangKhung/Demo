@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import DocumentSearch from "@/components/documents/DocumentSearch";
 import DocumentGrid from "@/components/documents/DocumentGrid";
 import DocumentUpload from "@/components/documents/DocumentUpload";
-import { getPublicDocuments, searchDocuments } from "@/lib/document-service";
+import { documentService, searchDocuments } from "@/lib/document-service";
 import { FiFileText, FiAlertTriangle } from "react-icons/fi";
 
 interface DocumentsPageProps {
@@ -50,14 +50,19 @@ function ErrorAlert({ error, id }: { error: string; id?: string }) {
 
 async function DocumentResults({ searchQuery }: { searchQuery?: string }) {
   try {
+    console.log("Fetching documents with search query:", searchQuery);
     let documents = [];
 
     if (searchQuery) {
+      console.log("Searching documents with query:", searchQuery);
       documents = await searchDocuments(searchQuery);
     } else {
-      documents = await getPublicDocuments();
+      console.log("Fetching all public documents");
+      const response = await documentService.getPublicDocuments();
+      documents = response.documents;
     }
 
+    console.log("Documents fetched successfully:", documents.length);
     return (
       <DocumentGrid
         documents={documents}
@@ -68,11 +73,30 @@ async function DocumentResults({ searchQuery }: { searchQuery?: string }) {
         }
       />
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error("Lỗi khi tải danh sách tài liệu:", error);
+    console.error("Error details:", {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
+      config: {
+        url: error.config?.url,
+        method: error.config?.method,
+        baseURL: error.config?.baseURL
+      }
+    });
+    
     return (
-      <div className="text-center p-8 text-red-500">
-        Đã xảy ra lỗi khi tải danh sách tài liệu. Vui lòng thử lại sau.
+      <div className="text-center p-8">
+        <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 inline-block">
+          <FiAlertTriangle className="w-6 h-6 text-red-400 mx-auto mb-2" />
+          <div className="text-red-400 font-medium">Lỗi tải dữ liệu</div>
+          <div className="text-red-300/80 text-sm mt-1">
+            {error.response?.status === 404 
+              ? "Không thể kết nối đến máy chủ. Vui lòng thử lại sau."
+              : "Đã xảy ra lỗi khi tải danh sách tài liệu. Vui lòng thử lại sau."}
+          </div>
+        </div>
       </div>
     );
   }
