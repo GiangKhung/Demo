@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const morgan = require("morgan");
 const helmet = require("helmet");
 const compression = require("compression");
+const cors = require("cors");
 const path = require("path");
 const { specs, swaggerUi, swaggerOptions } = require("./config/swagger");
 
