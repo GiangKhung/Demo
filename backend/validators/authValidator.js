@@ -1,72 +1,46 @@
-const { body } = require('express-validator');
+const { body } = require("express-validator");
 
 const registerValidator = [
-  body('name')
+  body("name")
     .trim()
-    .notEmpty()
-    .withMessage('Tên là bắt buộc')
-    .isLength({ min: 2, max: 100 })
-    .withMessage('Tên phải có từ 2-100 ký tự'),
-  
-  body('email')
-    .trim()
-    .notEmpty()
-    .withMessage('Email là bắt buộc')
-    .isEmail()
-    .withMessage('Email không hợp lệ')
-    .normalizeEmail(),
-  
-  body('password')
+    .isLength({ min: 2, max: 50 })
+    .withMessage("Tên phải từ 2-50 ký tự"),
+  body("email").isEmail().normalizeEmail().withMessage("Email không hợp lệ"),
+  body("password")
     .isLength({ min: 6 })
-    .withMessage('Mật khẩu phải có ít nhất 6 ký tự')
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
-    .withMessage('Mật khẩu phải chứa ít nhất 1 chữ hoa, 1 chữ thường và 1 số')
+    .withMessage("Mật khẩu phải ít nhất 6 ký tự"),
 ];
 
 const loginValidator = [
-  body('email')
-    .trim()
-    .notEmpty()
-    .withMessage('Email là bắt buộc')
-    .isEmail()
-    .withMessage('Email không hợp lệ')
-    .normalizeEmail(),
-  
-  body('password')
-    .notEmpty()
-    .withMessage('Mật khẩu là bắt buộc')
+  body("email").isEmail().normalizeEmail().withMessage("Email không hợp lệ"),
+  body("password").notEmpty().withMessage("Mật khẩu không được để trống"),
 ];
 
 const updateDetailsValidator = [
-  body('name')
+  body("name")
     .optional()
     .trim()
-    .isLength({ min: 2, max: 100 })
-    .withMessage('Tên phải có từ 2-100 ký tự'),
-  
-  body('email')
+    .isLength({ min: 2, max: 50 })
+    .withMessage("Tên phải từ 2-50 ký tự"),
+  body("email")
     .optional()
-    .trim()
     .isEmail()
-    .withMessage('Email không hợp lệ')
     .normalizeEmail()
+    .withMessage("Email không hợp lệ"),
 ];
 
 const updatePasswordValidator = [
-  body('currentPassword')
+  body("currentPassword")
     .notEmpty()
-    .withMessage('Mật khẩu hiện tại là bắt buộc'),
-  
-  body('newPassword')
+    .withMessage("Mật khẩu hiện tại không được để trống"),
+  body("newPassword")
     .isLength({ min: 6 })
-    .withMessage('Mật khẩu mới phải có ít nhất 6 ký tự')
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
-    .withMessage('Mật khẩu mới phải chứa ít nhất 1 chữ hoa, 1 chữ thường và 1 số')
+    .withMessage("Mật khẩu mới phải ít nhất 6 ký tự"),
 ];
 
 module.exports = {
   registerValidator,
   loginValidator,
   updateDetailsValidator,
-  updatePasswordValidator
+  updatePasswordValidator,
 };
