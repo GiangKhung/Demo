@@ -4,10 +4,7 @@ import axios, { AxiosInstance, AxiosResponse, AxiosError } from "axios";
 const getApiUrl = () => {
   // Server-side: use internal Docker network
   if (typeof window === "undefined") {
-    return (
-      process.env.NEXT_PUBLIC_API_URL ||
-      "https://docshare-backend-production.up.railway.app/api"
-    );
+    return process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:5000/api";
   }
   // Client-side: use public URL
   return process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:5000/api";
