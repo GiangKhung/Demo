@@ -10,31 +10,19 @@ const {
   getBookmarkedDocuments,
 } = require("../controllers/documentController");
 
-const { protect, optionalAuth } = require("../middleware/auth");
-const { uploadDocument } = require("../middleware/upload"); // Fix import
-const { documentLimiter } = require("../middleware/rateLimiter");
-const {
-  createDocumentValidator,
-  updateDocumentValidator,
-} = require("../validators/documentValidator");
+const { protect } = require("../middleware/auth");
+const upload = require("../middleware/upload");
 
 const router = express.Router();
 
 // Public routes
-router.get("/", optionalAuth, getDocuments);
-router.get("/:id", optionalAuth, getDocument);
+router.get("/", getDocuments);
+router.get("/:id", getDocument);
 router.get("/:id/download", downloadDocument);
 
 // Protected routes
-router.post(
-  "/",
-  protect,
-  documentLimiter,
-  uploadDocument,
-  createDocumentValidator,
-  createDocument
-);
-router.put("/:id", protect, updateDocumentValidator, updateDocument);
+router.post("/", protect, upload.single("file"), createDocument);
+router.put("/:id", protect, updateDocument);
 router.delete("/:id", protect, deleteDocument);
 router.post("/:id/bookmark", protect, bookmarkDocument);
 router.get("/bookmarks/my", protect, getBookmarkedDocuments);
