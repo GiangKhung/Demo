@@ -46,7 +46,7 @@ app.use(suspiciousActivityDetector);
 const corsOptions = {
   origin: [
     "http://localhost:3000",
-    "https://demo-production-151d.up.railway.app",
+    "https://docshare-production.up.railway.app",
     process.env.FRONTEND_URL,
   ].filter(Boolean),
   credentials: true,
