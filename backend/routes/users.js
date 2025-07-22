@@ -7,20 +7,21 @@ const {
   getUserStats,
 } = require("../controllers/userController");
 
-const { protect, authorize } = require("../middleware/auth");
+const { protect, admin } = require("../middleware/auth");
+const { generalLimiter } = require("../middleware/rateLimiter");
 
 const router = express.Router();
 
-// All routes are protected
-router.use(protect);
+// Apply rate limiting
+router.use(generalLimiter);
 
-// User routes
-router.get("/stats", getUserStats);
-router.get("/:id", getUser);
-router.put("/:id", updateUser);
+// Protected routes
+router.get("/stats", protect, getUserStats);
+router.get("/:id", protect, getUser);
+router.put("/:id", protect, updateUser);
 
 // Admin only routes
-router.get("/", authorize("admin"), getUsers);
-router.delete("/:id", authorize("admin"), deleteUser);
+router.get("/", protect, admin, getUsers);
+router.delete("/:id", protect, admin, deleteUser);
 
 module.exports = router;

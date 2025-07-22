@@ -11,7 +11,7 @@ const {
 } = require("../controllers/documentController");
 
 const { protect, optionalAuth } = require("../middleware/auth");
-const { upload } = require("../middleware/upload");
+const { uploadDocument } = require("../middleware/upload"); // Fix import
 const { documentLimiter } = require("../middleware/rateLimiter");
 const {
   createDocumentValidator,
@@ -26,7 +26,14 @@ router.get("/:id", optionalAuth, getDocument);
 router.get("/:id/download", downloadDocument);
 
 // Protected routes
-router.post("/", protect, documentLimiter, upload.single("file"), createDocumentValidator, createDocument);
+router.post(
+  "/",
+  protect,
+  documentLimiter,
+  uploadDocument,
+  createDocumentValidator,
+  createDocument
+);
 router.put("/:id", protect, updateDocumentValidator, updateDocument);
 router.delete("/:id", protect, deleteDocument);
 router.post("/:id/bookmark", protect, bookmarkDocument);
