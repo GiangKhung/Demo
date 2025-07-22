@@ -43,19 +43,7 @@ app.use(securityHeaders);
 app.use(suspiciousActivityDetector);
 
 // CORS configuration
-app.use(
-  cors({
-    origin: [
-      "http://localhost:3000",
-      "https://demo-production-151d.up.railway.app",
-      "https://your-frontend-domain.vercel.app", // Thêm domain frontend của bạn
-      "https://your-frontend-domain.netlify.app",
-    ],
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
+app.use(corsMiddleware);
 
 // Rate limiting
 app.use(generalLimiter);

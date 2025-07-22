@@ -1,7 +1,12 @@
 const cors = require("cors");
 
 const corsOptions = {
-  origin: true, // Tạm thời cho phép tất cả origin để test
+  origin: [
+    "http://localhost:3000",
+    "https://demo-production-151d.up.railway.app",
+    /\.vercel\.app$/,
+    /\.netlify\.app$/,
+  ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: [
