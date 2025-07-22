@@ -3,7 +3,7 @@ import axios, { AxiosResponse, AxiosError } from "axios";
 const getApiUrl = () => {
   // Ưu tiên URL backend chính xác
   const urls = [
-    "https://docshare-backend-production.up.railway.app/api", // URL chính xác
+    "https://graceful-balance-production-9b59.up.railway.app/api", // URL backend đúng
     process.env.NEXT_PUBLIC_API_URL,
     process.env.NEXT_PUBLIC_BACKEND_URL + "/api",
     "http://localhost:5000/api",

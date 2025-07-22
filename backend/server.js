@@ -43,18 +43,19 @@ app.use(securityHeaders);
 app.use(suspiciousActivityDetector);
 
 // CORS configuration
-const corsOptions = {
-  origin: [
-    "http://localhost:3000",
-    "https://docshare-production.up.railway.app",
-    process.env.FRONTEND_URL,
-  ].filter(Boolean),
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "x-api-key"],
-};
-
-app.use(cors(corsOptions));
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000",
+      "https://demo-production-1514.up.railway.app",
+      "https://docshare-frontend-production.up.railway.app",
+      process.env.FRONTEND_URL,
+    ].filter(Boolean),
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 // CORS configuration
 app.use(corsMiddleware);
 
