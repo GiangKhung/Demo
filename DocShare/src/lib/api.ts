@@ -1,25 +1,33 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosError } from "axios";
 
+// Thêm function để wake up backend
+export const wakeUpBackend = async () => {
+  try {
+    console.log("🔄 Đang đánh thức backend...");
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/health`,
+      {
+        timeout: 10000,
+      }
+    );
+    console.log("✅ Backend đã sẵn sàng:", response.data);
+    return true;
+  } catch (error) {
+    console.error("❌ Backend chưa sẵn sàng:", error);
+    return false;
+  }
+};
+
 // Get the appropriate API URL based on environment
 const getApiUrl = () => {
-  // Production environment
-  if (process.env.NODE_ENV === "production") {
-    return (
-      process.env.NEXT_PUBLIC_API_URL || "https://your-backend-url.com/api"
-    );
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  console.log("🌐 Using API URL:", apiUrl);
+
+  if (!apiUrl) {
+    console.warn("⚠️ NEXT_PUBLIC_API_URL không được set!");
   }
 
-  // Server-side: use internal Docker network
-  if (typeof window === "undefined") {
-    return (
-      process.env.API_URL ||
-      process.env.NEXT_PUBLIC_API_URL ||
-      "http://127.0.0.1:5000/api"
-    );
-  }
-
-  // Client-side: use public URL
-  return process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:5000/api";
+  return apiUrl || "https://demo-production-151d.up.railway.app/api";
 };
 
 // Create axios instance with base configuration

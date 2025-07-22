@@ -31,26 +31,44 @@ export const documentService = {
     params: Record<string, any> = {}
   ): Promise<DocumentsResponse> {
     try {
-      console.log("🔍 Fetching documents with params:", params);
-      console.log("🌐 API URL:", process.env.NEXT_PUBLIC_API_URL);
+      // Thử wake up backend trước
+      await wakeUpBackend();
 
+      console.log("🔍 Fetching documents...");
       const response = await api.get<{
         success: boolean;
         data: DocumentsResponse;
-      }>("/documents", { params });
+      }>("/documents", {
+        params,
+        timeout: 15000, // Tăng timeout
+      });
 
-      console.log("✅ Documents fetched successfully:", response.data);
       return response.data.data;
     } catch (error: any) {
-      console.error("❌ Error fetching public documents:", {
+      console.error("❌ Error details:", {
         message: error.message,
         status: error.response?.status,
+        statusText: error.response?.statusText,
         data: error.response?.data,
-        config: error.config,
       });
-      throw new Error(
-        error.response?.data?.error || "Không thể tải danh sách tài liệu"
-      );
+
+      // Retry một lần nữa sau 2 giây
+      if (error.code === "ERR_NETWORK" || error.code === "ERR_FAILED") {
+        console.log("🔄 Retry sau 2 giây...");
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+
+        try {
+          const retryResponse = await api.get<{
+            success: boolean;
+            data: DocumentsResponse;
+          }>("/documents", { params });
+          return retryResponse.data.data;
+        } catch (retryError) {
+          console.error("❌ Retry failed:", retryError);
+        }
+      }
+
+      throw new Error("Không thể kết nối đến server. Vui lòng thử lại sau.");
     }
   },
 
