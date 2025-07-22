@@ -31,44 +31,44 @@ export const documentService = {
     params: Record<string, any> = {}
   ): Promise<DocumentsResponse> {
     try {
-      // Thử wake up backend trước
-      await wakeUpBackend();
+      console.log("🔍 Fetching documents with params:", params);
 
-      console.log("🔍 Fetching documents...");
+      // Test connection first
+      try {
+        await api.get("/health");
+        console.log("✅ Backend connection OK");
+      } catch (healthError) {
+        console.warn("⚠️ Health check failed, proceeding anyway");
+      }
+
       const response = await api.get<{
         success: boolean;
         data: DocumentsResponse;
       }>("/documents", {
         params,
-        timeout: 15000, // Tăng timeout
+        timeout: 15000,
       });
 
+      console.log("✅ Documents fetched successfully");
       return response.data.data;
     } catch (error: any) {
-      console.error("❌ Error details:", {
+      console.error("❌ Error fetching documents:", {
         message: error.message,
         status: error.response?.status,
-        statusText: error.response?.statusText,
-        data: error.response?.data,
+        url: error.config?.url,
       });
 
-      // Retry một lần nữa sau 2 giây
-      if (error.code === "ERR_NETWORK" || error.code === "ERR_FAILED") {
-        console.log("🔄 Retry sau 2 giây...");
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-
-        try {
-          const retryResponse = await api.get<{
-            success: boolean;
-            data: DocumentsResponse;
-          }>("/documents", { params });
-          return retryResponse.data.data;
-        } catch (retryError) {
-          console.error("❌ Retry failed:", retryError);
-        }
-      }
-
-      throw new Error("Không thể kết nối đến server. Vui lòng thử lại sau.");
+      // Return empty data instead of throwing
+      return {
+        documents: [],
+        pagination: {
+          currentPage: 1,
+          totalPages: 0,
+          totalDocuments: 0,
+          hasNextPage: false,
+          hasPrevPage: false,
+        },
+      };
     }
   },
 

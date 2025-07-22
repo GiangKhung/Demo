@@ -85,22 +85,22 @@ createUploadDirs();
 // Serve static files (uploaded documents)
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Health check route
+// Health check endpoint
 app.get("/health", (req, res) => {
-  res.status(200).json({
+  res.json({
     success: true,
-    message: "DocShare API is running",
+    message: "Backend is running",
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV,
   });
 });
 
+// API health check
 app.get("/api/health", (req, res) => {
-  res.status(200).json({
+  res.json({
     success: true,
-    message: "DocShare API is running",
+    message: "API is working",
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV,
   });
 });
 
