@@ -8,7 +8,7 @@ interface HeroSectionProps {
 
 export const HeroSection: React.FC<HeroSectionProps> = ({ howItWorksRef }) => {
   const scrollToHowItWorks = () => {
-    howItWorksRef.current?.scrollIntoView({ behavior: 'smooth' });
+    howItWorksRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -29,7 +29,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ howItWorksRef }) => {
               <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-black leading-none uppercase split-text-animation tracking-tighter">
                 <div className="overflow-hidden">
                   <span className="inline-block animate-reveal-text-up">
-                    Nền tảng
+                    Nền tảng 123
                   </span>
                 </div>
                 <div className="overflow-hidden">
@@ -91,7 +91,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ howItWorksRef }) => {
             </div>
           </div>
         </div>
-        
+
         {/* Mobile scroll indicator */}
         <div className="flex md:hidden justify-center mt-12 mb-4">
           <div className="flex flex-col items-center space-y-2">
